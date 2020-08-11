@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <title>Recommendation System Presentation</title> -->
+  <title>{% block title %} {% endblock %} Recommendation System Presentation</title>
+  <!-- 引入样式 -->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"> -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
+  <!-- 引入组件库 -->
+  <script src="https://www.layuicdn.com/layui/layui.js"></script>
+</head>
+<body>
+  <div class="nav layui-fluid">
+    <div class="layui-row">
+      <!-- 前半部分显示 Home -->
+      <div class="layui-col-lg9 layui-col-md9">
+        <ul class="layui-nav" lay-filter="">
+          <li class="layui-nav-item layui-this"><a href="{{ url_for('index') }}">Home</a></li>
+        </ul>
+      </div>
+      <!-- 后半部分显示两种方案: 冷启动和协同过滤 -->
+      <div class="layui-col-lg3 layui-col-md3">
+        <ul class="layui-nav" lay-filter="">
+          <li class="layui-nav-item"><a href="{{ url_for('cold.register') }}">冷启动</a></li>
+          <li class="layui-nav-item"><a href="{{ url_for('collaborate.index') }}">协同过滤</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="layui-container">
+    {% block welcome %}
+      <h1>Welcome Test Recommondation System</h1>
+      {% block login %}
+      <a href="{{ url_for('cold.login') }}"><h3>Log In</h3></a>
+      {% endblock login %}
+    {% endblock welcome %}
+
+    <!-- 如果用户有登录，那么显示用户名和登出 -->
+    {% if g.user %}
+      <div class="user" style="background:bisque; display:flex; justify-content:left; align-items:baseline">
+        <h3 style="color: aqua; ">{{ g.user["username"] }}</h3>
+        <a href="{{ url_for('cold.logout') }}" style="font-size:15px; color:gray;">Log Out</a>
+      </div>
+    {% endif %}
+
+    <section class="content">
+      <header>
+        {% block header %}{% endblock %}
+      </header>
+      {% for message in get_flashed_messages() %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+      {% block content %}{% endblock %}
+    </section>
+  </div>
+  
+  <!-- footer 设置版权信息 -->
+  <div id="footer">
+      {% block footer %}
+      &copy; Copyright 2008 by <a href="http://domain.invalid/">you</a>.
+      {% endblock %}
+  </div>
+
+  <!-- <script>
+    //注意：导航 依赖 element 模块，否则无法进行功能性操作。此次使用 jinja 添加导航，并不是
+    // 需要下拉导航，所以还是不使用该脚本
+    layui.use('element', function(){
+      var element = layui.element;
+      
+      //…
+    });
+    </script> -->
+</body>
+</html>
