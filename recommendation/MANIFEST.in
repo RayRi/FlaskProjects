@@ -1,0 +1,5 @@
+include recommendation/databse/schema.sql
+graft recommendation/static
+graft recommendation/templates
+graft recommendation/scaffolding
+global-exclude *.pyc

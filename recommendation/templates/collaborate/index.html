@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}
+    Posts
+  {% endblock title %}</h1>
+  {% if g.user %}
+    <a href="{{ url_for('collaborate.create') }}" class="action">New</a>
+  {% endif %}
+{% endblock header %}
+
+<!-- 欢迎内容 -->
+{% block welcome %}
+  <p></p>
+{% endblock welcome %}
+
+
+{% block content %}
+  {% for post in posts %}
+    <article class="post">
+      <header>
+        <div>
+          <h1>{{ post['title'] }}</h1>
+          <div class="about">By {{ post["username"] }} on {{ post["created"].strftime('%Y-%m-%d') }}</div>
+        </div>
+        {% if g.user['id'] == post['author_id'] %}
+          <a href="{{ url_for('collaborate.update', id=post['id']) }}" class="action">Edit</a>
+        {% endif %}
+      </header>
+      <p class="body">{{ post['body'] }}</p>
+    </article>
+    {% if not loop.last %}  
+    <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock content %}
