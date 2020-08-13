@@ -1,0 +1,5 @@
+include sentiment/models/full_data_cnn_model.h5
+include sentiment/models/tokenizer_all_data_2e5.pkl
+graft sentiment/utils
+graft sentiment/app
+global-exclude *.pyc
