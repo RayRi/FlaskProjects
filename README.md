@@ -8,4 +8,17 @@
    * 设置运行的应用 `export FLASK_APP=recommendation`，如果需要开发模式开启需要通过命令启动 `export FLASK_ENV=development`
    * 启动 flask 服务器 `flask run`
 
+2. [RecommendationPresentation](./RecommendationPresentation) 
+
+   依赖 Flask 和 Flask-SQLAlchemy 搭建推荐系统展示页面
+
+   **Requirement**
+
+   * Flask
+   * Flask-SQLAlchemy
+   
+3. [sentimentAPI](./sentimentAPI)
+
+   依赖 Flask 搭建 `sentiment` 的 API，相关的内容说明参考 [README.md](./sentimentAPI/README.md)
+
    
