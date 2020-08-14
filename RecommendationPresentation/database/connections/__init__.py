@@ -48,7 +48,6 @@ class Manipulater(object):
 
 
     def __exit__(self, type, value, traceback):
-        import ipdb; ipdb.set_trace()
         self.Session.kw["bind"] = None
         self.__session.close()
         return True
