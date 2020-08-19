@@ -45,6 +45,26 @@ class Config:
         不允许修改原始配置信息
         """
         NotImplemented
+    
+    @property
+    def sqlalchemy(self):
+        """SQLAlchemy 全局配置信息
+        """
+        self.__check_section("SQLALCHEMY")
+        
+        config = {key: self.parser.get("SQLALCHEMY", key) for key in \
+            self.parser.options("SQLALCHEMY")}
+        
+        return config
+
+
+    @sqlalchemy.setter
+    def sqlalchemy(self, key, value):
+        """SQLAlchemy 配置信息设置
+
+        不允许修改原始配置信息
+        """
+        NotImplemented 
 
 
     def __check_section(self, section):
