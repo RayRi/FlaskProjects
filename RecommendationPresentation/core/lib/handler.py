@@ -5,17 +5,17 @@ import contextlib
 import sqlalchemy
 from sqlalchemy import orm
 
-from .datamodel import Series, Similarity, Base
-from ..conf import configure
+from ..etc import Base, DATABASE_CONFIGURE
+
 
 # database URI information
 URI = "mysql+pymysql://{user}{password}@{host}:{port}/{database}?charset={charset}"
 
-password = "" if not configure.mysql.get("password") else f':{configure.mysql.get("password")}'
+password = "" if not DATABASE_CONFIGURE.mysql.get("password") else f':{DATABASE_CONFIGURE.mysql.get("password")}'
 URI = URI.format(
-    user=configure.mysql.get("user"), password=password,
-    host=configure.mysql.get('host'), port=configure.mysql.get("port"),
-    charset= configure.mysql.get("charset"), database=configure.mysql.get("database")
+    user=DATABASE_CONFIGURE.mysql.get("user"), password=password,
+    host=DATABASE_CONFIGURE.mysql.get('host'), port=DATABASE_CONFIGURE.mysql.get("port"),
+    charset= DATABASE_CONFIGURE.mysql.get("charset"), database=DATABASE_CONFIGURE.mysql.get("database")
 )
 
 
@@ -23,7 +23,7 @@ ENGINE = sqlalchemy.create_engine(URI, echo=True)
 
 
 class Manipulater(object):
-    """
+    """使用 SQLAlchemy 操作数据
     操作数据:
     1. 写入数据
     2. 查询数据
@@ -42,7 +42,7 @@ class Manipulater(object):
 
 
     def __enter__(self):
-        self.Session.configure(bind=ENGINE)
+        self.Session.DATABASE_CONFIGURE(bind=ENGINE)
         self.__session = self.Session()
         return self.__session
 
@@ -62,11 +62,11 @@ class Manipulater(object):
         """
         # check whether engine binded, if there is not engine,
         if len(args) >= 1:
-            self.Session.configure(bind=args[0])
+            self.Session.DATABASE_CONFIGURE(bind=args[0])
         elif "bind" in kwargs:
-            self.Session.configure(bind=kwargs['bind'])
+            self.Session.DATABASE_CONFIGURE(bind=kwargs['bind'])
         else:
-            self.Session.configure(bind=ENGINE)
+            self.Session.DATABASE_CONFIGURE(bind=ENGINE)
 
         # 创建 session 对象
         session = self.Session()
