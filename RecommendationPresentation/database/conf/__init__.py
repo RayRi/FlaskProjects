@@ -72,8 +72,8 @@ class Config:
 
         检查 section 是否存在
         """
-        if not self.parser.has_section("mysql"):
-            raise LookupError("There is not mysql Secton in configuration")
+        if not self.parser.has_section(section):
+            raise LookupError(f"There is not {section} Secton in configuration")
         else:
             pass
 
