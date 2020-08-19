@@ -1,18 +1,54 @@
 #coding:utf8
 """
-解析数据库配置信息
+解析配置信息
 """
-import configparser
 import os
+import configparser
+import abc
 
-# config file
-file = os.path.join(os.path.dirname(__file__), "./database.ini")
 
-class Config:
+class Parser(metaclass=abc.ABCMeta):
+    def read(self, filename):
+        """解析出配置信息
+
+        解析指定文件中的配置信息
+        """
+        NotImplemented
+
+
+    def get(self, section, option, type=None):
+        """提取特定的配置信息
+
+        通过申明 option 和 section 的配置信息，并且可以通过 type 表示需要提取的配置数据类型
+
+        Args:
+        --------
+        section: str, 配置信息中的 section 名称
+        option: str, 在 section 配置下的 option 对应的值
+        type: str, 获取的数据类型，默认为 None，即没有申明特定的数据类型；`int` 表示提取的
+            数据值为 int，`float` 表示提取数据为 float，`bool` 或者 `boolean` 表示提取
+            的数据类型为布尔型数据
+        """
+        NotImplemented
+        
+
+
+    def check_section(self, section):
+        """检测 section
+
+        检查 section 是否存在
+        """
+        NotImplemented
+
+
+
+
+class DatabaseParser(Parser):
     def __init__(self, filename):
         # create parser object
         self.parser = configparser.ConfigParser()
         self.read(filename)
+
 
     def read(self, filename):
         """解析出配置信息
@@ -39,7 +75,7 @@ class Config:
             数据值为 int，`float` 表示提取数据为 float，`bool` 或者 `boolean` 表示提取
             的数据类型为布尔型数据
         """
-        self.__check_section(section)
+        self.check_section(section)
 
         if type.lower() == "int":
             return self.parser.getint(section, option)
@@ -56,7 +92,7 @@ class Config:
     def mysql(self):
         """MySQL 全局配置信息
         """
-        self.__check_section("mysql")
+        self.check_section("mysql")
 
         config = {key: self.parser.get("mysql", key) for key in \
             self.parser.options("mysql")}
@@ -72,11 +108,13 @@ class Config:
         """
         NotImplemented
     
+
+
     @property
     def sqlalchemy(self):
         """SQLAlchemy 全局配置信息
         """
-        self.__check_section("SQLALCHEMY")
+        self.check_section("SQLALCHEMY")
         
         config = {key: self.parser.get("SQLALCHEMY", key) for key in \
             self.parser.options("SQLALCHEMY")}
@@ -93,7 +131,7 @@ class Config:
         NotImplemented 
 
 
-    def __check_section(self, section):
+    def check_section(self, section):
         """检测 section
 
         检查 section 是否存在
@@ -102,8 +140,3 @@ class Config:
             raise LookupError(f"There is not {section} Secton in configuration")
         else:
             pass
-
-
-configure = Config(file)
-
-__all__ = ["configure"]
