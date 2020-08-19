@@ -26,6 +26,32 @@ class Config:
         self.parser.read(filename)
 
 
+    def get(self, section, option, type=None):
+        """提取特定的配置信息
+
+        通过申明 option 和 section 的配置信息，并且可以通过 type 表示需要提取的配置数据类型
+
+        Args:
+        --------
+        section: str, 配置信息中的 section 名称
+        option: str, 在 section 配置下的 option 对应的值
+        type: str, 获取的数据类型，默认为 None，即没有申明特定的数据类型；`int` 表示提取的
+            数据值为 int，`float` 表示提取数据为 float，`bool` 或者 `boolean` 表示提取
+            的数据类型为布尔型数据
+        """
+        self.__check_section(section)
+
+        if type.lower() == "int":
+            return self.parser.getint(section, option)
+        elif type.lower() == "float":
+            return self.parser.getfloat(section, option)
+        elif type.lower() in ["bool", "boolean"]:
+            return self.parser.getboolean(section, option)
+        else:
+            return self.parser.get(section, option)
+
+
+
     @property
     def mysql(self):
         """MySQL 全局配置信息
