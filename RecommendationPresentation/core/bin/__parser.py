@@ -65,7 +65,8 @@ class DatabaseParser(Parser):
     def get(self, section, option, type=None):
         """提取特定的配置信息
 
-        通过申明 option 和 section 的配置信息，并且可以通过 type 表示需要提取的配置数据类型
+        通过申明 option 和 section 的配置信息，并且可以通过 type 表示需要提取的配置数据类型。
+        默认 option 没有在 section 中，那么统一返回 None
 
         Args:
         --------
@@ -77,14 +78,18 @@ class DatabaseParser(Parser):
         """
         self.check_section(section)
 
-        if type.lower() == "int":
+        # 如果 option 没有在 section 下，那么返回 None
+        if not self.parser.has_option(section, option):
+            return None
+
+        if type is None:
+            return self.parser.get(section, option)
+        elif type.lower() == "int":
             return self.parser.getint(section, option)
         elif type.lower() == "float":
             return self.parser.getfloat(section, option)
         elif type.lower() in ["bool", "boolean"]:
             return self.parser.getboolean(section, option)
-        else:
-            return self.parser.get(section, option)
 
 
 
