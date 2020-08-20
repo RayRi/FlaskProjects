@@ -1,11 +1,11 @@
 
 
 -- ----------------------------
--- Table structure for temp
+-- Table structure for series
 -- 临时存储表，存储信息包括三个主要信息，影视 id、标题、海报 URL，用于构建推荐系统可视化使用
 -- ----------------------------
-DROP TABLE IF EXISTS `temp`;
-CREATE TABLE `temp` (
+DROP TABLE IF EXISTS `series`;
+CREATE TABLE `series` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `series_id` varchar(20) NOT NULL COMMENT '豆瓣影视剧条目 ID',
   `title` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '豆瓣影视标题',
