@@ -4,8 +4,10 @@ from __future__ import absolute_import
 import contextlib
 import sqlalchemy
 from sqlalchemy import orm
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import func
 
-from ..etc import Base, DATABASE_CONFIGURE
+from ..etc import DATABASE_CONFIGURE
 
 
 # database URI information
@@ -20,6 +22,57 @@ URI = URI.format(
 
 
 ENGINE = sqlalchemy.create_engine(URI, echo=True)
+
+
+# declarative Base
+Base = declarative_base()
+
+class Series(Base):
+    """影视数据表"""
+    __tablename__ = "series"
+
+    id = sqlalchemy.Column(sqlalchemy.BigInteger, primary_key=True, autoincrement=True)
+    series_id = sqlalchemy.Column(sqlalchemy.VARCHAR(20, convert_unicode=True), nullable=False)
+    title = sqlalchemy.Column(sqlalchemy.VARCHAR(length=150, convert_unicode=True), nullable=False)
+    cover = sqlalchemy.Column(sqlalchemy.VARCHAR(500, convert_unicode=True), nullable=True)
+    create_time = sqlalchemy.Column(sqlalchemy.DateTime, server_default=func.now())
+
+
+    def __repr__(self):
+        format = "<%s data model object at %s>"
+        return format % (self.__class__.__name__, hex(id(self)))
+
+    
+    def __str__(self):
+        format_ = "<{name}(id='{id}', series_id='{series_id}', title=" + \
+            "'{title}', cover='{cover}', create_time='{create_time}')>"
+        items = {key: self.__getattribute__(key) for key in self.__dir__() \
+            if not key.startswith("_")}
+
+        return format_.format(name=self.__tablename__, **items)
+
+
+
+class Similarity(Base):
+    """相似度表"""
+    __tablename__ = "similarity"
+
+    id = sqlalchemy.Column(sqlalchemy.BigInteger, primary_key=True, autoincrement=True)
+    sid1 = sqlalchemy.Column(sqlalchemy.VARCHAR(20), nullable=False, comment="影视 ID")
+    sid2 = sqlalchemy.Column(sqlalchemy.VARCHAR(20), nullable=False, comment="影视 ID")
+    sim = sqlalchemy.Column(sqlalchemy.FLOAT, nullable=False, default=0, comment="相似度")
+
+    def __repr__(self):
+        format = "<%s data model object at %s>"
+        return format % (self.__class__.__name__, hex(id(self)))
+
+    
+    def __str__(self):
+        format_ = "<{name}(id='{id}', sid1='{sid1}', sid2='{sid2}', sim='{sim}')>"
+        items = {key: self.__getattribute__(key) for key in self.__dir__() \
+            if not key.startswith("_")}
+
+        return format_.format(name=self.__tablename__, **items)
 
 
 class Manipulater(object):
@@ -42,7 +95,7 @@ class Manipulater(object):
 
 
     def __enter__(self):
-        self.Session.DATABASE_CONFIGURE(bind=ENGINE)
+        self.Session.configure(bind=ENGINE)
         self.__session = self.Session()
         return self.__session
 
@@ -62,11 +115,11 @@ class Manipulater(object):
         """
         # check whether engine binded, if there is not engine,
         if len(args) >= 1:
-            self.Session.DATABASE_CONFIGURE(bind=args[0])
+            self.Session.configure(bind=args[0])
         elif "bind" in kwargs:
-            self.Session.DATABASE_CONFIGURE(bind=kwargs['bind'])
+            self.Session.configure(bind=kwargs['bind'])
         else:
-            self.Session.DATABASE_CONFIGURE(bind=ENGINE)
+            self.Session.configure(bind=ENGINE)
 
         # 创建 session 对象
         session = self.Session()
