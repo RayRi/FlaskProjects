@@ -54,7 +54,7 @@ class Manipulater(object):
 
     
     @contextlib.contextmanager
-    def get_session(self, *args, **kwargs):
+    def get_session(self, *args, **kargs):
         """session 上下文管理方法
 
         session 对象，用于对数据操作。在开始前会绑定一个 ENGINE，接受自定义的 engine。第一
