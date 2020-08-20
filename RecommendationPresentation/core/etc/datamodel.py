@@ -2,22 +2,23 @@
 """
 数据表的数据模型
 """
-import sqlalchemy
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import func
+from __future__ import absolute_import
+import datetime
+from flask_sqlalchemy import SQLAlchemy
 
-# declarative Base
-Base = declarative_base()
 
-class Series(Base):
+DATABASE = SQLAlchemy()
+
+
+class Series(DATABASE.Model):
     """影视数据表"""
     __tablename__ = "series"
 
-    id = sqlalchemy.Column(sqlalchemy.BigInteger, primary_key=True, autoincrement=True)
-    series_id = sqlalchemy.Column(sqlalchemy.VARCHAR(20, convert_unicode=True), nullable=False)
-    title = sqlalchemy.Column(sqlalchemy.VARCHAR(length=150, convert_unicode=True), nullable=False)
-    cover = sqlalchemy.Column(sqlalchemy.VARCHAR(500, convert_unicode=True), nullable=True)
-    create_time = sqlalchemy.Column(sqlalchemy.DateTime, server_default=func.now())
+    id = DATABASE.Column(DATABASE.BigInteger, primary_key=True, autoincrement=True)
+    series_id = DATABASE.Column(DATABASE.VARCHAR(20, convert_unicode=True), nullable=False)
+    title = DATABASE.Column(DATABASE.VARCHAR(length=150, convert_unicode=True), nullable=False)
+    cover = DATABASE.Column(DATABASE.VARCHAR(500, convert_unicode=True), nullable=True)
+    create_time = DATABASE.Column(DATABASE.DateTime, default=datetime.datetime.utcnow())
 
 
     def __repr__(self):
@@ -35,14 +36,15 @@ class Series(Base):
 
 
 
-class Similarity(Base):
+class Similarity(DATABASE.Model):
     """相似度表"""
     __tablename__ = "similarity"
 
-    id = sqlalchemy.Column(sqlalchemy.BigInteger, primary_key=True, autoincrement=True)
-    sid1 = sqlalchemy.Column(sqlalchemy.VARCHAR(20), nullable=False, comment="影视 ID")
-    sid2 = sqlalchemy.Column(sqlalchemy.VARCHAR(20), nullable=False, comment="影视 ID")
-    sim = sqlalchemy.Column(sqlalchemy.FLOAT, nullable=False, default=0, comment="相似度")
+    id = DATABASE.Column(DATABASE.BigInteger, primary_key=True, autoincrement=True)
+    sid1 = DATABASE.Column(DATABASE.VARCHAR(20), nullable=False, comment="影视 ID")
+    sid2 = DATABASE.Column(DATABASE.VARCHAR(20), nullable=False, comment="影视 ID")
+    sim = DATABASE.Column(DATABASE.FLOAT, nullable=False, default=0, comment="相似度")
+
 
     def __repr__(self):
         format = "<%s data model object at %s>"

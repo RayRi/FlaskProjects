@@ -5,7 +5,7 @@ from __future__ import absolute_import
 import os
 
 from ..bin.__parser import DatabaseParser
-from .datamodel import Series, Similarity, Base
+from .datamodel import Series, Similarity, DATABASE
 
 # config file
 database_file = os.path.join(os.path.dirname(__file__), "./database.ini")
