@@ -34,6 +34,12 @@ class Series(DATABASE.Model):
 
         return format_.format(name=self.__tablename__, **items)
 
+    
+    def __eq__(self, other):
+        """比较两个对象是不是相等
+        """
+        return self.series_id == other.series_id
+
 
 
 class Similarity(DATABASE.Model):
@@ -57,3 +63,10 @@ class Similarity(DATABASE.Model):
             if not key.startswith("_")}
 
         return format_.format(name=self.__tablename__, **items)
+
+
+    
+    def __eq__(self, other):
+        """比较是否相等
+        """
+        return self.id == other.id
