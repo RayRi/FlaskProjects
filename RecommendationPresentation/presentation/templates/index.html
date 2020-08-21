@@ -34,13 +34,14 @@
 
 
   <!-- 版权部信息 -->
-  <div class="layui-fluid">
+  <div class="layui-fluid layui-main">
+    {% block welcome %}
+    <h1 style="text-align: center;">欢迎使用推荐系统演示版</h1>
+    {% endblock welcome %}
     <div class="layui-row">
       <div style="display: flex; align-items:baseline">
-        {% block welcome %}
-          <h1 style="align-items: center;" class="layui-main">欢迎使用推荐系统演示版</h1>
-        {% endblock welcome %}
       </div>
+    </div>
     </div>
 
 
@@ -48,12 +49,11 @@
     <!-- 排行榜信息 -->
     <div class="layui-col-lg6">
       {% block origin %}
-        <h2 style="border-bottom:1.5px solid #EBEBEB; font-size:32px">豆瓣影视排行榜</h2>
-        <ol id="cold" style="padding-left: 15px">
+        <h2 style="border-bottom:1.5px solid #EBEBEB; font-size:32px; margin:0 25px;">豆瓣影一周口碑排行榜</h2>
+        <ol id="cold" style="padding-left: 40px">
           <div class="layui-inline">
             {% for item in series -%}
                 <li style="list-style:decimal; color:#6e6e6e; font-size:19px; padding:1.5px 0 15px 0">
-                  <!-- <span><img src="data:;base64, {{ item.cover }}" alt="" width=200></span> -->
                   {{- item.title -}}
                 </li>
             {%- endfor %}
@@ -65,20 +65,36 @@
 
     <!-- 推荐条目 -->
     <div class="layui-col-lg6">
+      <h2 style="border-bottom:1.5px solid #EBEBEB; font-size:32px; margin:0 20px;">推荐内容</h2>
       {% block recommend %}
-      {% endblock recommend %}
+      <!-- 如果没有可用备选内容，那么显示出原因 -->
+        {% if recommendations|length == 0 %}
+          <p>没有可用推荐内容</p>
+        {%- else -%}
+          <div class="layui-row grid-demo" style="display: inline;">
+            {%- for item in recommendations -%}
+              <div class="layui-col-md3">
+                <div class="recomendation-img">
+                  <span><img src="data:;base64, {{ item.cover }}" alt="" width=45%></span>
+                </div>
+                <div class="recomenation-title" style="list-style:decimal; color:#6e6e6e; font-size:15px; padding:1.5px 0 15px 0">{{- item.title -}}</div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif -%}
+        
+      {%- endblock recommend %}
     </div>
-  </div>
   
   
   <!-- footer 设置版权信息 -->
-  <!-- <div class="layui-footer">
-    <div id="footer">
-      {%- block footer -%}
-      &copy; Copyright 2020 by <a href="http://domain.invalid/">you</a>.
-      {%- endblock %}
+  <div class="layui-footer">
+    <div>
+        {%- block footer -%}
+        &copy; Copyright 2020 by <a href="http://domain.invalid/">you</a>.
+        {%- endblock %}
     </div>
-  </div> -->
+  </div>
 
 
   <!-- <script>

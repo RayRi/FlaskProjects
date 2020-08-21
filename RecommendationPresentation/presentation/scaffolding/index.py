@@ -7,7 +7,7 @@
 from __future__ import absolute_import
 
 import numpy as np
-
+from collections import Counter
 from flask import (
     Blueprint, g, redirect, render_template, request, session, url_for, abort,
     Response
@@ -24,13 +24,30 @@ def home():
     """
     error = None
     # 获取随机的 10 个数据
-    ids = np.random.randint(1, len(Series.query.all()), 10)
+    ids = np.random.choice(np.arange(1, len(Series.query.all())), 10)
+    
     series = Series.query.filter(Series.id.in_(ids.tolist())).all()
+    # for item in series:
+    #     item.cover = item.cover.decode("ascii")
 
     # 判断是否获取到信息
     if not series:
-        abort(404, Response("没有请求到资源"))
+        # abort(404, Response("<h1>没有请求到资源</h1>"))
+        # debug
+        abort(Response("<h1>没有请求到资源</h1>"))
 
     # 解析 10 个备选数据中对应的推荐条目
     # 采用的依据是：对所有条目计数，从高到低排序
-    return render_template("index.html", series=series)
+    series_ids = [item.series_id for item in series]
+    recommendation_most = Counter([item.sid2 for sid1 in series_ids \
+        for item in Similarity.query.filter(Similarity.sid1 == sid1).all()]).most_common(30)
+    
+    recommendation_ids = [item[0] for item in recommendation_most]
+    recommendations = Series.query.filter(
+            Series.series_id.in_(recommendation_ids)
+        ).all() + series
+    
+    for item in recommendations:
+        item.cover = item.cover.decode("ascii")
+    # import ipdb; ipdb.set_trace()
+    return render_template("index.html", series=series, recommendations=recommendations)
