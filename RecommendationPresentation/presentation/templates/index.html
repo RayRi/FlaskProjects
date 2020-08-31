@@ -54,7 +54,7 @@
           <div class="layui-inline">
             {% for item in series -%}
                 <li style="list-style:decimal; color:#6e6e6e; font-size:19px; padding:1.5px 0 15px 0">
-                  {{- item.title -}}
+                  <a href="{{ 'https://movie.douban.com/subject/' ~item.series_id ~'/' }}" target="_blank">{{- item.title -}}</a>
                 </li>
             {%- endfor %}
           </div>
@@ -71,18 +71,23 @@
         {% if recommendations|length == 0 %}
           <p>没有可用推荐内容</p>
         {%- else -%}
-          <div class="layui-row grid-demo" style="display: inline;">
-            {%- for item in recommendations -%}
-              <div class="layui-col-md3">
-                <div class="recomendation-img">
-                  <span><img src="data:;base64, {{ item.cover }}" alt="" width=45%></span>
-                </div>
-                <div class="recomenation-title" style="list-style:decimal; color:#6e6e6e; font-size:15px; padding:1.5px 0 15px 0">{{- item.title -}}</div>
-              </div>
-            {% endfor %}
-          </div>
+          {% for column in recommendations|slice(6) %}
+            <div class="layui-row grid-demo" style="display: inline;">
+              {% for item in column %}
+                <div class="layui-col-md3">
+                  <a href="{{ 'https://movie.douban.com/subject/' ~item.series_id ~'/' }}" target="_blank">
+                    <div class="recomendation-img">
+                      <span><img src="data:;base64, {{ item.cover }}" alt="" width=50%></span>
+                    </div>
+                    <div class="recomenation-title" style="list-style:decimal; color:#6e6e6e; font-size:15px; padding:1.5px 0 15px 0">
+                      {{- item.title -}} <p style="font-size: 10px;">{{ " (推荐频次: " ~item.count ~ ")" }}</p>
+                    </div>
+                  </a>
+                </div> 
+              {% endfor %}
+            </div>
+          {% endfor %}
         {% endif -%}
-        
       {%- endblock recommend %}
     </div>
   

@@ -40,14 +40,15 @@ def home():
     # 采用的依据是：对所有条目计数，从高到低排序
     series_ids = [item.series_id for item in series]
     recommendation_most = Counter([item.sid2 for sid1 in series_ids \
-        for item in Similarity.query.filter(Similarity.sid1 == sid1).all()]).most_common(30)
+        for item in Similarity.query.filter(Similarity.sid1 == sid1).all()]).most_common(24)
     
     recommendation_ids = [item[0] for item in recommendation_most]
-    recommendations = Series.query.filter(
-            Series.series_id.in_(recommendation_ids)
-        ).all() + series
-    
-    for item in recommendations:
-        item.cover = item.cover.decode("ascii")
-    # import ipdb; ipdb.set_trace()
+    recommendations = [] 
+
+    for id_, count in recommendation_most:
+        item = Series.query.filter(Series.series_id == id_).first()
+        item.count = count
+        recommendations.append(item)
+        item.cover = item.cover.decode("ascii") if item.cover else None
+
     return render_template("index.html", series=series, recommendations=recommendations)

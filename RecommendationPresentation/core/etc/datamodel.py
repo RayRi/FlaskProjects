@@ -7,7 +7,7 @@ import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 
-DATABASE = SQLAlchemy()
+DATABASE = SQLAlchemy(session_options={"autoflush": False})
 
 
 class Series(DATABASE.Model):
