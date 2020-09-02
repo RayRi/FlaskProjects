@@ -29,7 +29,7 @@ class Series(Base):
     # cover = sqlalchemy.Column(sqlalchemy.VARCHAR(500, convert_unicode=True), nullable=True)
 
     # 保存为 BLOB 数据在字段甚至
-    cover = sqlalchemy.Column(sqlalchemy.BLOB, nullable=False)
+    cover = sqlalchemy.Column(sqlalchemy.BLOB, nullable=True)
 
 
     def __repr__(self):

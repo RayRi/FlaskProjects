@@ -47,6 +47,11 @@ def create_app():
     # 首页路由
     from .scaffolding import index
     app.register_blueprint(index.bp)
+
+    # 基于标签的冷启动蓝图注册
+    from .scaffolding import cold
+    app.register_blueprint(cold.bp)
+
     return app
 
 
