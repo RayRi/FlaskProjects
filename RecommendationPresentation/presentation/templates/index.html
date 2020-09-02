@@ -8,8 +8,9 @@
   <!-- 引入样式 -->
   <!-- <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"> -->
   <link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <!-- 引入组件库 -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="https://www.layuicdn.com/layui/layui.js"></script>
 </head>
 <body>
@@ -24,7 +25,7 @@
       <!-- 后半部分显示两种方案: 冷启动和协同过滤 -->
       <div class="layui-col-lg3 layui-col-md3">
         <ul class="layui-nav" lay-filter="">
-          <li class="layui-nav-item"><a href=" url_for('cold.register') ">冷启动</a></li>
+          <li class="layui-nav-item"><a href="{{ url_for('cold.initial') }}">冷启动</a></li>
           <li class="layui-nav-item"><a href=" url_for('collaborate.index') ">协同过滤</a></li>
         </ul>
       </div>
@@ -32,23 +33,21 @@
   </div>
 
 
-
-  <!-- 版权部信息 -->
-  <div class="layui-fluid layui-main">
-    {% block welcome %}
-    <h1 style="text-align: center;">欢迎使用推荐系统演示版</h1>
-    {% endblock welcome %}
-    <div class="layui-row">
-      <div style="display: flex; align-items:baseline">
+  {% block welcome %}
+    <div class="layui-fluid layui-main">
+      <h1 style="text-align: center;">欢迎使用推荐系统演示版</h1>
+      <div class="layui-row">
+        <div style="display: flex; align-items:baseline">
+        </div>
       </div>
     </div>
-    </div>
+  {% endblock welcome %}
 
 
 
     <!-- 排行榜信息 -->
-    <div class="layui-col-lg6">
-      {% block origin %}
+    {% block origin %}
+      <div class="layui-col-lg6">
         <h2 style="border-bottom:1.5px solid #EBEBEB; font-size:32px; margin:0 25px;">豆瓣影一周口碑排行榜</h2>
         <ol id="cold" style="padding-left: 40px">
           <div class="layui-inline">
@@ -59,39 +58,42 @@
             {%- endfor %}
           </div>
         </ol>
-      {% endblock origin %}
-    </div>
+      </div>
+    {% endblock origin %}
 
 
     <!-- 推荐条目 -->
-    <div class="layui-col-lg6">
-      <h2 style="border-bottom:1.5px solid #EBEBEB; font-size:32px; margin:0 20px;">推荐内容</h2>
-      {% block recommend %}
-      <!-- 如果没有可用备选内容，那么显示出原因 -->
-        {% if recommendations|length == 0 %}
-          <p>没有可用推荐内容</p>
-        {%- else -%}
-          {% for column in recommendations|slice(6) %}
-            <div class="layui-row grid-demo" style="display: inline;">
-              {% for item in column %}
-                <div class="layui-col-md3">
-                  <a href="{{ 'https://movie.douban.com/subject/' ~item.series_id ~'/' }}" target="_blank">
-                    <div class="recomendation-img">
-                      <span><img src="data:;base64, {{ item.cover }}" alt="" width=50%></span>
-                    </div>
-                    <div class="recomenation-title" style="list-style:decimal; color:#6e6e6e; font-size:15px; padding:1.5px 0 15px 0">
-                      {{- item.title -}} <p style="font-size: 10px;">{{ " (推荐频次: " ~item.count ~ ")" }}</p>
-                    </div>
-                  </a>
-                </div> 
-              {% endfor %}
-            </div>
-          {% endfor %}
-        {% endif -%}
-      {%- endblock recommend %}
-    </div>
+    {% block recommend %}
+      <div class="layui-col-lg6">
+        <h2 style="border-bottom:1.5px solid #EBEBEB; font-size:32px; margin:0 20px;">推荐内容</h2>
+        <!-- 如果没有可用备选内容，那么显示出原因 -->
+          {% if recommendations|length == 0 %}
+            <p>没有可用推荐内容</p>
+          {%- else -%}
+            {% for column in recommendations|slice(6) %}
+              <div class="layui-row grid-demo" style="display: inline;">
+                {% for item in column %}
+                  <div class="layui-col-md3">
+                    <a href="{{ 'https://movie.douban.com/subject/' ~item.series_id ~'/' }}" target="_blank">
+                      <div class="recomendation-img">
+                        <span><img src="data:;base64, {{ item.cover }}" alt="" width=50%></span>
+                      </div>
+                      <div class="recomenation-title" style="list-style:decimal; color:#6e6e6e; font-size:15px; padding:1.5px 0 15px 0">
+                        {{- item.title -}} <p style="font-size: 10px;">{{ " (推荐频次: " ~item.count ~ ")" }}</p>
+                      </div>
+                    </a>
+                  </div> 
+                {% endfor %}
+              </div>
+            {% endfor %}
+          {% endif -%}
+      </div>
+    {%- endblock recommend %}
   
-  
+    <!-- 涉及到需要添加额外的脚本模版的情况，添加一个 block -->
+  {% block script -%}
+  {%- endblock script %}
+
   <!-- footer 设置版权信息 -->
   <div class="layui-footer">
     <div>
