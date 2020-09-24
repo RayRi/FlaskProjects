@@ -1,0 +1,88 @@
+{% extends 'index.html' %}
+
+<!-- 假设用户观看内容 -->
+{% block origin %}
+<div class="layui-col-lg6">
+  <h2 style="border-bottom:1.5px solid #EBEBEB; font-size:32px; margin:0 25px;">用户观看序列</h2>
+  {% for column in series|slice(3) %}
+    <div class="layui-row grid-demo" style="display: inline;">
+      {% with %}
+        {% set current_index = loop.index %}
+        {% for item in column %}
+          <div class="layui-col-md3" style="height: 300px">
+            <div class="recomendation-img">
+              <a href="{{ 'https://movie.douban.com/subject/' ~ item.series_id ~ '/'}}" target="_blank">
+                <img src="data:;base64, {{ item.cover }}" alt="" width=120px style="margin-left:10px">
+              </a>
+            </div>
+            <div class="recomenation-title" style="list-style:decimal; color:#6e6e6e; padding:1.5px 0 15px 0; margin-left:10px;">
+              <button class="layui-btn layui-btn-normal item" id="{{ item.series_id }}" style="display:inline-flex; width:120px;">
+                <p style="font-size:14px">{{- item.title -}}</p>
+                <span style=" text-align:left; font-size:9px">{{- "序列: "~[4*(current_index - 1),loop.index]|sum|string -}}</span>
+              </button>
+            </div>
+          </div> 
+        {% endfor %}
+      {% endwith %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock origin %}
+
+
+{% block recommend %}
+  <div class="layui-col-lg6">
+    <h2 style="border-bottom:1.5px solid #EBEBEB; font-size:32px; margin:0 20px;">推荐内容</h2>
+    <!-- 如果没有可用备选内容，那么显示出原因 -->
+    <div class="recommendations"></div>
+  </div>
+{%- endblock recommend %}
+
+<!-- 添加 AJAX 调用需要的脚本 -->
+{% block script %}
+  <script type=text/javascript>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+    function listen(event){
+      //debugger
+      event.preventDefault();
+      $.ajax({
+        method: "POST",
+        url: {{ url_for('cold.recommendations')|tojson }},
+        //body: new FormData({"series_id": this.getAttribute('id')})
+        data: {series_id: this.getAttribute('id')},
+        dataType: "json",
+        success: function(data){
+          show(data);
+        }
+      });
+    }
+    
+    
+    function show(data){
+      // 清除页面
+      $("div.recommendations").html("")
+      let column = 6;
+      for (let i=0; i < column; i++){
+        let element = '<div class="layui-row grid-demo cold" style="display: inline;">\n'
+        data.result.slice(i*column, (i+1)*column).forEach(
+          function(item, index){
+            element += '<div class="layui-col-md2">\n'
+            element += ' <a href="https://movie.douban.com/subject/' + item.series_id + "/\"" + ' target="_blank">\n'
+            element += '<div class="recomendation-img">\n'
+            element += '<span><img src="data:;base64,' + item.cover + '" alt="" width=35%></span>\n</div>'
+            element += '<div class="recomenation-title" style="list-style:decimal; color:#6e6e6e; font-size:12px; padding:1.5px 0 5px 0;">\n'
+            element += item.title + '<p style="font-size: 10px;">(相似度: ' + item.similarity.toFixed(2) +')</p>\n'
+            element += "</div>\n</a>\n</div>\n"
+          }
+        );
+        element += "</div>"
+        $("div.recommendations").append(element);
+      }
+    }
+    
+    $("button.item").on("click",  listen)
+  </script>
+  <!-- <script src="{{ url_for('static', filename='js/cold-recommendations.js') }}"></script> -->
+  <!-- <script src="{{ url_for('static', filename='js/cold-recommendations.js') }}"></script> -->
+{% endblock script %}
